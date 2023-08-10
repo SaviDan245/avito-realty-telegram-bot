@@ -10,7 +10,7 @@ router = Router()
 
 @router.message(F.text == 'Список отслеживаемых ссылок')
 async def show_links(message: Message):
-    data = pd.read_csv('../db/links.csv', delimiter=',')
+    data = pd.read_csv('../db/links.csv', delimiter=',', index_col=0)
     if len(data) == 0:
         await message.answer(LEXICON['empty_links'], reply_markup=get_main_kb())
     else:

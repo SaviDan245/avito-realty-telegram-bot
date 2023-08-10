@@ -6,7 +6,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
 
 from lexicon import LEXICON
-from keyboards.new_link import get_new_link_kb
+from keyboards.abort import get_abort_kb
 from keyboards.main import get_main_kb
 
 router = Router()
@@ -19,7 +19,7 @@ class NewLink(StatesGroup):
 
 @router.message(F.text == 'Отслеживать новую ссылку')
 async def paste_new_link(message: Message, state: FSMContext):
-    await message.answer(LEXICON['paste_new_link'], reply_markup=get_new_link_kb())
+    await message.answer(LEXICON['paste_new_link'], reply_markup=get_abort_kb())
     await state.set_state(NewLink.pasting_new_link)
 
 

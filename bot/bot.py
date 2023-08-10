@@ -4,9 +4,10 @@ import logging
 from aiogram import Bot, Dispatcher
 
 from config_reader import config
-from handlers import base, list_links, add_link
+from handlers import base, list_links, add_link, remove_link
 
 logger = logging.getLogger(__name__)
+
 
 # Запуск бота
 async def main():
@@ -23,6 +24,7 @@ async def main():
     dp.include_router(base.router)
     dp.include_router(add_link.router)
     dp.include_router(list_links.router)
+    dp.include_router(remove_link.router)
 
     # Запускаем бота и пропускаем все накопленные входящие
     # Да, этот метод можно вызвать даже если у вас поллинг

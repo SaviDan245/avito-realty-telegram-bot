@@ -2,7 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
-def get_new_link_kb() -> ReplyKeyboardMarkup:
+def get_abort_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardBuilder()
 
     kb.button(text='Отмена')
