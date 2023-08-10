@@ -25,3 +25,8 @@
 #
 # if __name__ == '__main__':
 #     main()
+
+import pandas as pd
+
+data = pd.read_csv('../db/links.csv', delimiter=',', index_col=0)
+print('hello' in data['url'].values)
