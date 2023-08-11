@@ -1,18 +1,23 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-import pandas as pd
-import requests
-
-from keyboards.main import get_main_kb
-from lexicon import LEXICON
-
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
+
+from bot.keyboards.main import get_main_kb
+from bot.lexicon import LEXICON
+from bot.utils import clean_str, BUTTONS
 
 router = Router()
 
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer(LEXICON['/start'], reply_markup=get_main_kb())
+    mess = clean_str(LEXICON['/start'])
+    await message.answer(mess, reply_markup=get_main_kb())
+
+
+@router.message(F.text == BUTTONS['abort'])
+async def abort(message: Message, state: FSMContext):
+    mess = clean_str(LEXICON['abort'])
+    await message.answer(mess, reply_markup=get_main_kb())
+    await state.clear()

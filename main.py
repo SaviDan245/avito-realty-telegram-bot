@@ -3,8 +3,8 @@ import logging
 
 from aiogram import Bot, Dispatcher
 
-from config_reader import config
-from handlers import base, list_links, add_link, remove_link
+from bot.config_reader import config
+from bot.handlers import add_link, base, send_offers, list_links, remove_link, send_realty_db, track, change_freq
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +25,10 @@ async def main():
     dp.include_router(add_link.router)
     dp.include_router(list_links.router)
     dp.include_router(remove_link.router)
+    dp.include_router(send_offers.router)
+    dp.include_router(send_realty_db.router)
+    dp.include_router(track.router)
+    dp.include_router(change_freq.router)
 
     # Запускаем бота и пропускаем все накопленные входящие
     # Да, этот метод можно вызвать даже если у вас поллинг

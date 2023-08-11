@@ -1,11 +1,10 @@
 import json
 from datetime import datetime
-from typing import List, Union
+from typing import Union, List
 from urllib.parse import unquote
 
 import requests
 from selectolax.parser import HTMLParser
-from termcolor import cprint
 
 from db.fetch_db import update_database
 
@@ -18,7 +17,8 @@ def get_json(url: str) -> dict:
     :param url: адрес поисковой строки с фильтрами и сортировкой по дате
     :return: JSON-словарь
     """
-    response = requests.get(url)
+    proxy = {'http': 'http://47.88.62.42:80'}
+    response = requests.get(url, proxies=proxy)
     html = response.text
 
     tree = HTMLParser(html)
@@ -43,14 +43,17 @@ def get_offer(item: dict) -> Union[None, dict]:
     try:
         timestamp = datetime.fromtimestamp(item['sortTimeStamp'] / 1000)
 
-        city = item['geo']['geoReferences'][0]['content']
+        if len(item['geo']['geoReferences']):
+            city = item['geo']['geoReferences'][0]['content']
+        else:
+            city = '?'
         adress = item['geo']['formattedAddress']
         coords = f'{item["coords"]["lat"]},{item["coords"]["lng"]}'
 
         raw_title = item['title'].split(', ')
-        area = float(raw_title[1][:-2].strip().replace(',', '.'))
-        rooms = raw_title[0]
-        floor, total_floor = raw_title[2].split()[0].split('/')
+        area = float(raw_title[0].split()[1].replace(',', '.'))
+        rooms = raw_title[0].split()[-1][0]
+        floor, total_floor = map(int, raw_title[1].split()[0].split('/'))
 
         offer = {
             'title': item['title'].replace('\xa0', ' '),
@@ -67,7 +70,8 @@ def get_offer(item: dict) -> Union[None, dict]:
         }
 
     except:
-        return None
+        print(item)
+        exit(0)
     else:
         return offer
 
@@ -87,19 +91,29 @@ def upload_offers(data: dict) -> List[dict]:
     if target_key is None:
         raise (KeyError('Искомый ключ не найден в JSON'))
 
+    new_offers: List[dict] = []
+
     for item in data[target_key]['data']['catalog']['items']:
         if item.get('id'):
-            offer = get_offer(item)
+            offer: dict = get_offer(item)
             if offer:
-                update_database(offer)
+                response: bool = update_database(offer)
+                if response:
+                    new_offers.append(offer)
+                    print(f'Оффер {item["id"]} добавлен в базу данных')
+                else:
+                    print(f'Оффер {item["id"]} уже добавлен в базу данных.')
             else:
-                cprint('Не удалось добавить оффер в базу данных.', 'red')
+                print(f'Не удалось добавить оффер {item["id"]} в базу данных.')
+
+    return new_offers
 
 
-def main(url: str) -> None:
+def get_new_offers(url: str) -> list:
     json_data = get_json(url)
-    upload_offers(json_data)
+    return upload_offers(json_data)
 
 
 if __name__ == '__main__':
-    main('https://www.avito.ru/moskva_i_mo/kvartiry/sdam/na_dlitelnyy_srok-ASgBAgICAkSSA8gQ8AeQUg?cd=1&s=104')
+    new_offers = get_new_offers('https://www.avito.ru/kazan/komnaty/prodam-ASgBAgICAUSQA7wQ?context=H4sIAAAAAAAA_0q0MrSqLraysFJKK8rPDUhMT1WyLrYyNLNSKk5NLErOcMsvyg3PTElPLVGyrgUEAAD__xf8iH4tAAAA&f=ASgBAgECAUSQA7wQAkX6BxV7ImZyb20iOjE2LCJ0byI6bnVsbH3GmgwXeyJmcm9tIjowLCJ0byI6MjAwMDAwMH0&s=104')
+    print(new_offers)
