@@ -1,2 +1,14 @@
 
 .DS_Store
+
+.idea/
+
+bot/__pycache__/
+
+parsers/__pycache__/
+
+dbs/__pycache__/
+
+bot/keyboards/__pycache__/
+
+bot/handlers/__pycache__/
