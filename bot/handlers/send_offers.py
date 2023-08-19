@@ -1,6 +1,7 @@
 import pandas as pd
 from aiogram import Router, F
 from aiogram.types import Message
+from selenium import webdriver
 
 from bot.keyboards.main import get_main_kb
 from bot.lexicon import LEXICON
@@ -18,7 +19,8 @@ async def send_new_offers(message: Message):
         await message.answer(mess, reply_markup=get_main_kb())
     else:
         for i, [header, url] in enumerate(zip(data['header'], data['url'])):
-            new_offers = parse_offers(get_new_offers(url))
+            raw_offers, driver = get_new_offers(url)
+            new_offers = parse_offers(raw_offers)
             if not new_offers:
                 continue
             # header_mess = clean_str(f'*Ссылка №{i + 1}. [{header}]({url})*\n\n' + r'\~' * N_TILDAS + '\n\n')
@@ -27,3 +29,4 @@ async def send_new_offers(message: Message):
                 htext = f'__*От ссылки: {header}*__\n\n' + r'\~' * N_TILDAS + '\n\n' + text
                 mess = clean_str(htext)
                 await message.answer(mess)
+        driver.quit()

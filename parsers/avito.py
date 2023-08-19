@@ -1,25 +1,28 @@
 import json
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Tuple
 from urllib.parse import unquote
+from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
 
 import requests
 from selectolax.parser import HTMLParser
 
-from db.fetch_db import update_database
+from dbs.fetch_db import update_database
 
 SITE = 'https://www.avito.ru'
 
 
-def get_json(url: str) -> dict:
+def get_json(driver: WebDriver) -> dict:
     """
     Получить JSON-словарь из HTML-кода страницы
     :param url: адрес поисковой строки с фильтрами и сортировкой по дате
     :return: JSON-словарь
     """
-    proxy = {'http': 'http://47.88.62.42:80'}
-    response = requests.get(url, proxies=proxy)
-    html = response.text
+
+    html = driver.execute_script("return document.documentElement.outerHTML;")
+    if 'Ничего не найдено' in html:
+        return {}
 
     tree = HTMLParser(html)
     scripts = tree.css('script')
@@ -28,6 +31,7 @@ def get_json(url: str) -> dict:
 
     for script in scripts:
         if 'window.__initialData__' in script.text():
+            # print('HERE')
             json_raw = unquote(script.text().split(';')[0].split('=')[1].strip().strip('"'))
             json_data = json.loads(json_raw)
 
@@ -76,12 +80,13 @@ def get_offer(item: dict) -> Union[None, dict]:
         return offer
 
 
-def upload_offers(data: dict) -> List[dict]:
+def upload_offers(data: dict, update_db: bool) -> List[dict]:
     """
     Обновить базу данных новыми офферами
     :param data: JSON-словарь
     :return: список объявлений с необходимыми данными
     """
+    # print(data)
     target_key = None
     for key in data.keys():
         if 'single-page' in key:
@@ -97,6 +102,9 @@ def upload_offers(data: dict) -> List[dict]:
         if item.get('id'):
             offer: dict = get_offer(item)
             if offer:
+                if not update_db:
+                    new_offers.append(offer)
+                    continue
                 response: bool = update_database(offer)
                 if response:
                     new_offers.append(offer)
@@ -109,9 +117,14 @@ def upload_offers(data: dict) -> List[dict]:
     return new_offers
 
 
-def get_new_offers(url: str) -> list:
-    json_data = get_json(url)
-    return upload_offers(json_data)
+def get_new_offers(url: str, update_db: bool = True) -> Tuple[list, WebDriver]:
+    driver = webdriver.Chrome()
+    driver.get(url)
+
+    json_data = get_json(driver)
+    if not json_data:
+        return [], driver
+    return upload_offers(json_data, update_db), driver
 
 
 if __name__ == '__main__':

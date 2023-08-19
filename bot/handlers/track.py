@@ -36,7 +36,8 @@ async def begin_tracking(message: Message, state: FSMContext):
             status = await state.get_state()
             if status == 'Tracker:running':
                 for i, [header, url] in enumerate(zip(data['header'], data['url'])):
-                    new_offers = parse_offers(get_new_offers(url))
+                    raw_offers, driver = get_new_offers(url)
+                    new_offers = parse_offers(raw_offers)
                     if not new_offers:
                         continue
                     else:
@@ -46,6 +47,7 @@ async def begin_tracking(message: Message, state: FSMContext):
                             htext = f'__*От ссылки: {header}*__\n\n' + r'\~' * N_TILDAS + '\n\n' + text
                             mess = clean_str(htext)
                             await message.answer(mess)
+                driver.quit()
                 await asyncio.sleep(freq)
 
 

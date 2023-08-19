@@ -1,14 +1,13 @@
 import pandas as pd
 from typing import List
 
-LINKS_FILEPATH = 'db/links.csv'
-REALTY_FILEPATH = 'db/realty.db'
-TRACK_FREQ_FILEPATH = 'db/track_freq.txt'
+LINKS_FILEPATH = 'dbs/links.csv'
+REALTY_FILEPATH = 'dbs/realty.dbs'
+TRACK_FREQ_FILEPATH = 'dbs/track_freq.txt'
 
 N_TILDAS = 30
 
 REALTY_COLUMNS = [
-    '№ п/п',
     'Название',
     'Ссылка на объявление',
     'ID объявления',
@@ -86,4 +85,4 @@ def update_links(sample: dict) -> None:
 
 
 if __name__ == '__main__':
-    print(check_link('dcmkemckdckd'))
+    print(check_link(''))
