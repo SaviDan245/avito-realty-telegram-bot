@@ -25,15 +25,15 @@ async def send_realty_db(message: Message):
         export_df = pd.DataFrame(columns=REALTY_COLUMNS)
 
         for page in range(1, 101):
-            raw_offers, driver = get_new_offers(url + f'&p={page}', update_db=False)
+            print(page)
+            raw_offers = get_new_offers(url + f'&p={page}', update_db=False)
             if not raw_offers:
                 break
             values_list = [d.values() for d in raw_offers]
             export_df = pd.concat([export_df, pd.DataFrame(values_list, columns=REALTY_COLUMNS)])
 
+
         export_df.to_excel('bot/files/realty_database.xlsx')
 
         file = FSInputFile('bot/files/realty_database.xlsx')
         await message.answer_document(file)
-
-        driver.quit()

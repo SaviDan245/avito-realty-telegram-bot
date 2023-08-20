@@ -38,11 +38,12 @@ export_df = pd.DataFrame(columns=REALTY_COLUMNS)
 
 for page in range(1, 101):
     print(page)
-    raw_offers, driver = get_new_offers(url + f'&p={page}', update_db=False)
+    raw_offers = get_new_offers(url + f'&p={page}', update_db=False)
+
     if not raw_offers:
         break
     values_list = [d.values() for d in raw_offers]
     export_df = pd.concat([export_df, pd.DataFrame(values_list, columns=REALTY_COLUMNS)])
 
 print(export_df)
-# export_df.to_excel('bot/files/realty_database.xlsx')
+export_df.to_excel('bot/files/realty_database.xlsx')

@@ -12,3 +12,5 @@ dbs/__pycache__/
 bot/keyboards/__pycache__/
 
 bot/handlers/__pycache__/
+
+geckodriver.log

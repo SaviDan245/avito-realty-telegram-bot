@@ -1,12 +1,11 @@
 import json
 from datetime import datetime
-from typing import Union, List, Tuple
+from typing import Union, List
 from urllib.parse import unquote
+
+from selectolax.parser import HTMLParser
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver
-
-import requests
-from selectolax.parser import HTMLParser
 
 from dbs.fetch_db import update_database
 
@@ -117,14 +116,18 @@ def upload_offers(data: dict, update_db: bool) -> List[dict]:
     return new_offers
 
 
-def get_new_offers(url: str, update_db: bool = True) -> Tuple[list, WebDriver]:
-    driver = webdriver.Chrome()
+def get_new_offers(url: str, update_db: bool = True) -> list:
+    driver = webdriver.Firefox()
     driver.get(url)
 
     json_data = get_json(driver)
+    # driver.quit()
     if not json_data:
-        return [], driver
-    return upload_offers(json_data, update_db), driver
+        return []
+
+    result = upload_offers(json_data, update_db)
+
+    return result
 
 
 if __name__ == '__main__':

@@ -19,7 +19,7 @@ async def send_new_offers(message: Message):
         await message.answer(mess, reply_markup=get_main_kb())
     else:
         for i, [header, url] in enumerate(zip(data['header'], data['url'])):
-            raw_offers, driver = get_new_offers(url)
+            raw_offers = get_new_offers(url)
             new_offers = parse_offers(raw_offers)
             if not new_offers:
                 continue
@@ -29,4 +29,3 @@ async def send_new_offers(message: Message):
                 htext = f'__*От ссылки: {header}*__\n\n' + r'\~' * N_TILDAS + '\n\n' + text
                 mess = clean_str(htext)
                 await message.answer(mess)
-        driver.quit()
