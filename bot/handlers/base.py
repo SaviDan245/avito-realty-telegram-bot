@@ -1,14 +1,11 @@
-import os
-
 from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
 from bot.keyboards.main import get_main_kb
 from bot.lexicon import LEXICON
 from bot.utils import clean_str, BUTTONS
-from dbs.create_db import create_db
 
 router = Router()
 

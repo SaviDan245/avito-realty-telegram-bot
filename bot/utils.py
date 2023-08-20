@@ -1,14 +1,17 @@
 import os
+import random
+from typing import List
 
 import pandas as pd
-from typing import List
 
 LINKS_FILEPATH = os.path.join('dbs', 'links.csv')
 REALTY_FILEPATH = os.path.join('dbs', 'realty.db')
 TRACK_FREQ_FILEPATH = os.path.join('dbs', 'track_freq.txt')
+FILES_FILEPATH = os.path.join('bot', 'files')
 XLSX_FILEPATH = os.path.join('bot', 'files', 'realty_database.xlsx')
 
 N_TILDAS = 30
+ADD_RANDOM_MINUTES = list(range(-5, 6))
 
 REALTY_COLUMNS = [
     'Название',
@@ -85,6 +88,13 @@ def update_links(sample: dict) -> None:
     new_link = pd.DataFrame({'header': [sample['header']], 'url': [sample['url']]})
     upd_data = pd.concat([data, new_link])
     upd_data.to_csv(LINKS_FILEPATH)
+
+
+def get_freq() -> int:
+    with open(TRACK_FREQ_FILEPATH) as f:
+        freq = int(f.readline())  # in seconds
+    
+    return freq + random.choice(ADD_RANDOM_MINUTES) * 60
 
 
 if __name__ == '__main__':

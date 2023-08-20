@@ -9,7 +9,7 @@ from selenium import webdriver
 
 from bot.keyboards.main import get_main_kb
 from bot.lexicon import LEXICON
-from bot.utils import BUTTONS, TRACK_FREQ_FILEPATH, LINKS_FILEPATH, N_TILDAS, clean_str, parse_offers
+from bot.utils import BUTTONS, LINKS_FILEPATH, N_TILDAS, clean_str, parse_offers, get_freq
 from parsers.avito import get_new_offers_by_driver
 
 router = Router()
@@ -22,9 +22,6 @@ class Tracker(StatesGroup):
 
 @router.message(F.text == BUTTONS['begin_tracking'])
 async def begin_tracking(message: Message, state: FSMContext):
-    with open(TRACK_FREQ_FILEPATH) as f:
-        freq = int(f.readline().strip())
-
     links = pd.read_csv(LINKS_FILEPATH, delimiter=',', index_col=0)
     if len(links) == 0:
         mess = clean_str(LEXICON['empty_links'])
@@ -53,7 +50,7 @@ async def begin_tracking(message: Message, state: FSMContext):
                             await message.answer(mess)
 
                 driver.quit()
-                await asyncio.sleep(freq)
+                await asyncio.sleep(get_freq())
 
 
 @router.message(F.text == BUTTONS['stop_tracking'])

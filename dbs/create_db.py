@@ -1,5 +1,5 @@
-import sqlite3 as sql
 import os
+import sqlite3 as sql
 
 
 def create_db(path: str):

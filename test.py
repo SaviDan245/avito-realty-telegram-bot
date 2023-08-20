@@ -28,24 +28,29 @@
 # print(json_data)
 # print(len(json_data))
 
-import pandas as pd
-from bot.utils import LINKS_FILEPATH, REALTY_COLUMNS, XLSX_FILEPATH
-from parsers.avito import get_new_offers
-
 import os
 
-links = pd.read_csv(LINKS_FILEPATH, delimiter=',', index_col=0)
-url: str = links['url'][0]
-export_df = pd.DataFrame(columns=REALTY_COLUMNS)
+# links = pd.read_csv(LINKS_FILEPATH, delimiter=',', index_col=0)
+# url: str = links['url'][0]
+# export_df = pd.DataFrame(columns=REALTY_COLUMNS)
+#
+# for page in range(1, 101):
+#     print(page)
+#     raw_offers = get_new_offers(url + f'&p={page}', 123456789, update_db=False)
+#
+#     if not raw_offers:
+#         break
+#     values_list = [d.values() for d in raw_offers]
+#     export_df = pd.concat([export_df, pd.DataFrame(values_list, columns=REALTY_COLUMNS)])
+#
+# print(export_df)
+# export_df.to_excel(XLSX_FILEPATH)
 
-for page in range(1, 101):
-    print(page)
-    raw_offers = get_new_offers(url + f'&p={page}', 123456789, update_db=False)
+folder_path = os.path.join('bot', 'files')
 
-    if not raw_offers:
-        break
-    values_list = [d.values() for d in raw_offers]
-    export_df = pd.concat([export_df, pd.DataFrame(values_list, columns=REALTY_COLUMNS)])
+print(os.path.exists(folder_path))
 
-print(export_df)
-export_df.to_excel(XLSX_FILEPATH)
+if not os.path.exists(folder_path):
+    os.mkdir(folder_path)
+
+print(os.path.exists(folder_path))

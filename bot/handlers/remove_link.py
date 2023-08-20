@@ -1,13 +1,12 @@
 import pandas as pd
-import requests
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
 
-from bot.lexicon import LEXICON
 from bot.keyboards.abort import get_abort_kb
 from bot.keyboards.main import get_main_kb
+from bot.lexicon import LEXICON
 from bot.utils import LINKS_FILEPATH, clean_str, BUTTONS
 
 router = Router()
