@@ -14,3 +14,5 @@ bot/keyboards/__pycache__/
 bot/handlers/__pycache__/
 
 geckodriver.log
+
+.idea/.gitignore
