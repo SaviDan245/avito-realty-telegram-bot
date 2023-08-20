@@ -33,11 +33,11 @@ async def good_number(message: Message, state: FSMContext):
     with open(TRACK_FREQ_FILEPATH) as f:
         prev_freq = int(f.readline().strip())
 
-    new_freq = int(message.text) * 60
+    new_freq = int(message.text) * 60  # to seconds
 
     with open(TRACK_FREQ_FILEPATH, 'w') as f:
         print(new_freq, file=f)
 
     mess = clean_str(LEXICON['success_change_freq'].format(prev_freq=prev_freq // 60, new_freq=new_freq // 60))
-    await message.answer(mess, reply_markup=get_main_kb())
+    await message.answer(mess, reply_markup=get_main_kb())  # back to minutes
     await state.clear()

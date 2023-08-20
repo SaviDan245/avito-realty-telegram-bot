@@ -29,8 +29,10 @@
 # print(len(json_data))
 
 import pandas as pd
-from bot.utils import LINKS_FILEPATH, REALTY_COLUMNS
+from bot.utils import LINKS_FILEPATH, REALTY_COLUMNS, XLSX_FILEPATH
 from parsers.avito import get_new_offers
+
+import os
 
 links = pd.read_csv(LINKS_FILEPATH, delimiter=',', index_col=0)
 url: str = links['url'][0]
@@ -38,7 +40,7 @@ export_df = pd.DataFrame(columns=REALTY_COLUMNS)
 
 for page in range(1, 101):
     print(page)
-    raw_offers = get_new_offers(url + f'&p={page}', update_db=False)
+    raw_offers = get_new_offers(url + f'&p={page}', 123456789, update_db=False)
 
     if not raw_offers:
         break
@@ -46,4 +48,4 @@ for page in range(1, 101):
     export_df = pd.concat([export_df, pd.DataFrame(values_list, columns=REALTY_COLUMNS)])
 
 print(export_df)
-export_df.to_excel('bot/files/realty_database.xlsx')
+export_df.to_excel(XLSX_FILEPATH)

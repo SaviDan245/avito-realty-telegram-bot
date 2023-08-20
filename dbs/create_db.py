@@ -18,7 +18,8 @@ def create_db(path: str):
         rooms TEXT,
         floor INTEGER,
         total_floor INTEGER,
-        location_link TEXT
+        location_link TEXT,
+        user_id INTEGER
         )
     """)
     connection.close()

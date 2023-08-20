@@ -37,7 +37,7 @@ def get_json(driver: WebDriver) -> dict:
     return json_data
 
 
-def get_offer(item: dict) -> Union[None, dict]:
+def get_offer(item: dict, user_id: int) -> Union[None, dict]:
     """
     Распарсить оффер для добавления в базу данных
     :param item: JSON оффера
@@ -69,17 +69,19 @@ def get_offer(item: dict) -> Union[None, dict]:
             'rooms': rooms,
             'floor': floor,
             'total_floor': total_floor,
-            'location_link': 'https://www.google.com/maps/search/?api=1&query=' + coords
+            'location_link': 'https://www.google.com/maps/search/?api=1&query=' + coords,
+            'user_id': user_id
         }
 
-    except:
+    except Exception as e:
         print(item)
+        print(e)
         exit(0)
     else:
         return offer
 
 
-def upload_offers(data: dict, update_db: bool) -> List[dict]:
+def upload_offers(data: dict, user_id: int, update_db: bool) -> List[dict]:
     """
     Обновить базу данных новыми офферами
     :param data: JSON-словарь
@@ -99,7 +101,7 @@ def upload_offers(data: dict, update_db: bool) -> List[dict]:
 
     for item in data[target_key]['data']['catalog']['items']:
         if item.get('id'):
-            offer: dict = get_offer(item)
+            offer: dict = get_offer(item, user_id)
             if offer:
                 if not update_db:
                     new_offers.append(offer)
@@ -116,16 +118,33 @@ def upload_offers(data: dict, update_db: bool) -> List[dict]:
     return new_offers
 
 
-def get_new_offers(url: str, update_db: bool = True) -> list:
+def get_new_offers_by_driver(driver: WebDriver, user_id: int, update_db: bool = True) -> list:
+    json_data = get_json(driver)
+
+    if not json_data:
+        return []
+
+    result = upload_offers(json_data, user_id, update_db)
+    return result
+
+
+def get_new_offers(url: str, user_id: int, update_db: bool = True) -> list:
     driver = webdriver.Firefox()
     driver.get(url)
 
+    print('Got URL')
+
     json_data = get_json(driver)
+
+    print('Got JSON')
+
     # driver.quit()
     if not json_data:
         return []
 
-    result = upload_offers(json_data, update_db)
+    result = upload_offers(json_data, user_id, update_db)
+
+    print('Got results')
 
     return result
 

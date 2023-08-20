@@ -5,11 +5,12 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
+from selenium import webdriver
 
 from bot.keyboards.main import get_main_kb
 from bot.lexicon import LEXICON
 from bot.utils import BUTTONS, TRACK_FREQ_FILEPATH, LINKS_FILEPATH, N_TILDAS, clean_str, parse_offers
-from parsers.avito import get_new_offers
+from parsers.avito import get_new_offers_by_driver
 
 router = Router()
 
@@ -24,8 +25,8 @@ async def begin_tracking(message: Message, state: FSMContext):
     with open(TRACK_FREQ_FILEPATH) as f:
         freq = int(f.readline().strip())
 
-    data = pd.read_csv(LINKS_FILEPATH, delimiter=',', index_col=0)
-    if len(data) == 0:
+    links = pd.read_csv(LINKS_FILEPATH, delimiter=',', index_col=0)
+    if len(links) == 0:
         mess = clean_str(LEXICON['empty_links'])
         await message.answer(mess, reply_markup=get_main_kb())
     else:
@@ -35,8 +36,11 @@ async def begin_tracking(message: Message, state: FSMContext):
         while True:
             status = await state.get_state()
             if status == 'Tracker:running':
-                for i, [header, url] in enumerate(zip(data['header'], data['url'])):
-                    raw_offers = get_new_offers(url)
+                driver = webdriver.Firefox()
+
+                for i, [header, url] in enumerate(zip(links['header'], links['url'])):
+                    driver.get(url)
+                    raw_offers = get_new_offers_by_driver(driver, message.from_user.id)
                     new_offers = parse_offers(raw_offers)
                     if not new_offers:
                         continue
@@ -47,6 +51,8 @@ async def begin_tracking(message: Message, state: FSMContext):
                             htext = f'__*От ссылки: {header}*__\n\n' + r'\~' * N_TILDAS + '\n\n' + text
                             mess = clean_str(htext)
                             await message.answer(mess)
+
+                driver.quit()
                 await asyncio.sleep(freq)
 
 

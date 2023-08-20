@@ -1,9 +1,12 @@
+import os
+
 import pandas as pd
 from typing import List
 
-LINKS_FILEPATH = 'dbs/links.csv'
-REALTY_FILEPATH = 'dbs/realty.dbs'
-TRACK_FREQ_FILEPATH = 'dbs/track_freq.txt'
+LINKS_FILEPATH = os.path.join('dbs', 'links.csv')
+REALTY_FILEPATH = os.path.join('dbs', 'realty.db')
+TRACK_FREQ_FILEPATH = os.path.join('dbs', 'track_freq.txt')
+XLSX_FILEPATH = os.path.join('bot', 'files', 'realty_database.xlsx')
 
 N_TILDAS = 30
 

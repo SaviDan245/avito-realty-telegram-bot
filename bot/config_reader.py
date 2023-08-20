@@ -1,5 +1,8 @@
+import os
+
 from pydantic_settings import BaseSettings
 from pydantic import SecretStr
+
 
 
 class Settings(BaseSettings):
@@ -11,7 +14,7 @@ class Settings(BaseSettings):
     class Config:
         # Имя файла, откуда будут прочитаны данные
         # (относительно текущей рабочей директории)
-        env_file = 'bot/.env'
+        env_file = os.path.join('bot', '.env')
         # Кодировка читаемого файла
         env_file_encoding = 'utf-8'
 
