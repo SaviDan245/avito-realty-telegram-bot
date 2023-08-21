@@ -8,6 +8,7 @@ from aiogram.types import Message
 from selenium import webdriver
 
 from bot.keyboards.main import get_main_kb
+from bot.keyboards.stop_track import get_stop_kb
 from bot.lexicon import LEXICON
 from bot.utils import BUTTONS, LINKS_FILEPATH, N_TILDAS, clean_str, parse_offers, get_freq
 from parsers.avito import get_new_offers_by_driver
@@ -29,7 +30,7 @@ async def begin_tracking(message: Message, state: FSMContext):
     else:
         await state.set_state(Tracker.running)
         mess = clean_str(LEXICON['begin_tracking'])
-        await message.answer(mess)
+        await message.answer(mess, reply_markup=get_stop_kb())
         while True:
             status = await state.get_state()
             if status == 'Tracker:running':
@@ -57,4 +58,4 @@ async def begin_tracking(message: Message, state: FSMContext):
 async def stop_tracking(message: Message, state: FSMContext):
     await state.set_state(Tracker.stop)
     mess = clean_str(LEXICON['stop_tracking'])
-    await message.answer(mess)
+    await message.answer(mess, reply_markup=get_main_kb())

@@ -6,7 +6,6 @@ def get_main_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardBuilder()
 
     kb.button(text='✅ Начать отслеживание')
-    kb.button(text='⛔ Приостановить отслеживание')
     kb.button(text='🧾 Список отслеживаемых ссылок')
     kb.button(text='🔗 Вывести новые офферы по ссылкам')
     kb.button(text='➕ Отслеживать новую ссылку')
@@ -14,6 +13,6 @@ def get_main_kb() -> ReplyKeyboardMarkup:
     kb.button(text='💽 Скачать базу данных')
     kb.button(text='🔢 Изменить частоту уведомлений')
 
-    kb.adjust(2, 2, 2, 2)
+    kb.adjust(1, 2, 2, 2)
 
     return kb.as_markup(resize_keyboard=True)
