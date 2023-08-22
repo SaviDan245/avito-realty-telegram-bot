@@ -13,7 +13,7 @@ def create_db(path: str):
         offer_id INTEGER,
         date TEXT,
         price INTEGER,
-        adress TEXT,
+        address TEXT,
         area FLOAT,
         rooms TEXT,
         floor INTEGER,

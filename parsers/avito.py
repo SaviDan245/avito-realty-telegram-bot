@@ -41,30 +41,33 @@ def get_offer(item: dict, user_id: int) -> Union[None, dict]:
     """
     Распарсить оффер для добавления в базу данных
     :param item: JSON оффера
+    :param user_id: id пользователя телеграма
     :return: необходимые данные из оффера (в случае успеха)
     """
     try:
+        # print(item)
+        
         timestamp = datetime.fromtimestamp(item['sortTimeStamp'] / 1000)
 
         if len(item['geo']['geoReferences']):
             city = item['geo']['geoReferences'][0]['content']
         else:
             city = '?'
-        adress = item['geo']['formattedAddress']
+        address = item['geo']['formattedAddress']
         coords = f'{item["coords"]["lat"]},{item["coords"]["lng"]}'
-
+        
         raw_title = item['title'].split(', ')
-        area = float(raw_title[0].split()[1].replace(',', '.'))
-        rooms = raw_title[0].split()[-1][0]
-        floor, total_floor = map(int, raw_title[1].split()[0].split('/'))
-
+        area = float(raw_title[1].split()[0].replace(',', '.'))
+        rooms = raw_title[0]
+        floor, total_floor = map(int, raw_title[2].split()[0].split('/'))
+        
         offer = {
             'title': item['title'].replace('\xa0', ' '),
             'url': SITE + item['urlPath'],
             'offer_id': item['id'],
             'date': datetime.strftime(timestamp, '%d.%m.%Y в %H:%M'),
             'price': item['priceDetailed']['value'],
-            'adress': city + ', ' + adress,
+            'address': city + ', ' + address,
             'area': area,
             'rooms': rooms,
             'floor': floor,
@@ -72,6 +75,8 @@ def get_offer(item: dict, user_id: int) -> Union[None, dict]:
             'location_link': 'https://www.google.com/maps/search/?api=1&query=' + coords,
             'user_id': user_id
         }
+        
+        # print(offer)
 
     except Exception as e:
         print(item)
@@ -109,11 +114,13 @@ def upload_offers(data: dict, user_id: int, update_db: bool) -> List[dict]:
                 response: bool = update_database(offer)
                 if response:
                     new_offers.append(offer)
-                    print(f'Оффер {item["id"]} добавлен в базу данных')
+                    # print(f'Оффер {item["id"]} добавлен в базу данных')
                 else:
-                    print(f'Оффер {item["id"]} уже добавлен в базу данных.')
+                    pass
+                    # print(f'Оффер {item["id"]} уже добавлен в базу данных.')
             else:
-                print(f'Не удалось добавить оффер {item["id"]} в базу данных.')
+                pass
+                # print(f'Не удалось добавить оффер {item["id"]} в базу данных.')
 
     return new_offers
 
@@ -150,5 +157,5 @@ def get_new_offers(url: str, user_id: int, update_db: bool = True) -> list:
 
 
 if __name__ == '__main__':
-    new_offers = get_new_offers('https://www.avito.ru/kazan/komnaty/prodam-ASgBAgICAUSQA7wQ?context=H4sIAAAAAAAA_0q0MrSqLraysFJKK8rPDUhMT1WyLrYyNLNSKk5NLErOcMsvyg3PTElPLVGyrgUEAAD__xf8iH4tAAAA&f=ASgBAgECAUSQA7wQAkX6BxV7ImZyb20iOjE2LCJ0byI6bnVsbH3GmgwXeyJmcm9tIjowLCJ0byI6MjAwMDAwMH0&s=104')
-    print(new_offers)
+    new_offers = get_new_offers('https://m.avito.ru/kazan/kvartiry/prodam/1-komnatnye/vtorichka-ASgBAgICA0SSA8YQ5geMUsoIgFk?context=H4sIAAAAAAAAA0u0MrSqLraysFJKK8rPDUhMT1WyLrYys1LKzMvJzANyagF-_ClVIgAAAA&f=ASgBAgECA0SSA8YQ5geMUsoIgFkCRYQJFXsiZnJvbSI6MTYsInRvIjpudWxsfcaaDBd7ImZyb20iOjAsInRvIjoyMDAwMDAwfQ&moreExpensive=0&radius=0&s=104&presentationType=serp', 123456789)
+    # print(new_offers)

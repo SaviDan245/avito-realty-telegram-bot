@@ -72,7 +72,7 @@ def parse_offers(offers: List[dict]) -> List[str]:
         text = ''
         text += f'[*Ссылка на объявление*]({offer["url"]})\n'
         text += f'*Название:* {offer["title"]}\n'
-        text += f'*Адрес:* [{offer["adress"]}]({offer["location_link"]})\n'
+        text += f'*Адрес:* [{offer["address"]}]({offer["location_link"]})\n'
         text += f'*Стоимость:* {beautify_price(offer["price"])}\n'
         text += f'*Всего комнат в квартире:* {offer["rooms"]}\n'
         text += f'*Площадь помещения:* {offer["area"]} кв. м.\n'

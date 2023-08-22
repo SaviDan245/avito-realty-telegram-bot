@@ -16,7 +16,7 @@ def update_database(offer: dict) -> bool:
             cursor.execute("""
                 INSERT INTO offers
                 VALUES (NULL,
-                :title, :url, :offer_id, :date, :price, :adress, :area, :rooms, :floor, :total_floor, :location_link, :user_id)
+                :title, :url, :offer_id, :date, :price, :address, :area, :rooms, :floor, :total_floor, :location_link, :user_id)
             """, offer)
             connection.commit()
             return True
